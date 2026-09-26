@@ -1,0 +1,59 @@
+============================================================================
+ IFT3335 - Devoir 1 : Section théorique (20 points)
+ Répondez sous chaque question, dans l'espace réservé.
+ Ce fichier est à remettre avec src/student_solver.py.
+============================================================================
+
+Prénom, Nom et Matricule:
+
+
+
+
+----------------------------------------------------------------------------
+Question 1 (6 points)
+Comparez les résultats obtenus, soit le nombre de nœuds explorés, le chemin
+obtenu ainsi que la valeur de ce dernier pour l'algorithme A* avec les
+heuristiques de Manhattan et Euclidienne. Est-ce que les deux sont identiques
+ou il y en a une meilleure que l'autre ?
+
+Réponse :
+
+
+
+
+----------------------------------------------------------------------------
+Question 2 (4 points)
+Lequel ou lesquels des algorithmes trouvent le chemin de plus courte distance
+entre le point de départ et le point d'arrivée, c'est-à-dire, qui trouvent le
+chemin de distance minimum entre le point de départ et d'arrivée ?
+
+Réponse :
+
+
+
+
+----------------------------------------------------------------------------
+Question 3 (4 points)
+Lequel ou lesquels des algorithmes choisiriez-vous pour votre future
+application d'aide à la navigation ? Basez votre choix sur la fiabilité ainsi
+que la rapidité de la réponse trouvée.
+
+Réponse :
+
+
+
+
+----------------------------------------------------------------------------
+Question 4 (6 points)
+Le contexte établi dans le devoir est une carte du plateau Mont Royal qui
+s'étend sur environ 4 km x 4 km et contient 647 nœuds. Si la carte change pour
+une carte du Canada de Montréal à Vancouver, le nombre d'intersections (nœuds)
+augmenterait, quel problème pourrions-nous rencontrer dans les algorithmes
+implémentés dans ce devoir ? Proposez un autre algorithme ou une variante pour
+régler ce problème.
+
+Réponse :
+
+
+
+

@@ -1,0 +1,10 @@
+# Dépendances du travail pratique — installation :
+#   python -m venv .venv
+#   .venv\Scripts\activate      (Windows)   |   source .venv/bin/activate  (macOS/Linux)
+#   pip install -r requirements.txt
+
+osmnx>=2.0,<3          # lecture du réseau OpenStreetMap (fournit networkx, shapely, pandas)
+networkx>=3.0          # structure de graphe sous-jacente
+matplotlib>=3.8        # affichage et animation de la recherche
+pillow>=10.0           # enregistrement des animations en .gif
+pytest>=8              # correction automatique (tests/)
