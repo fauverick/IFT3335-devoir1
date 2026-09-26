@@ -5,12 +5,12 @@
 
 Prénom, Nom et Matricule:
 
-
-
+Hung, Nguyen (20246446)
+Larue, Olivier ()
 
 """
-
 from __future__ import annotations
+from math import inf
 
 import heapq
 import math
@@ -80,7 +80,24 @@ def bfs(adj: Adjacency, start: int, goal: int) -> SearchResult:
     expanded: list[int] = []         # Liste pour stocker les noeuds développés dans leur ordre d'exploration.       
     n_explored = 0                   # Compteur pour compter le nombre de noeuds développés. Il doit être incrémenté à chaque fois qu'un noeud est développé.  
 
-    # TODO : Compléter le code ici
+    visited = set()
+    queue = deque([start])
+
+    while queue:
+        node = queue.popleft()
+        visited.add(node)
+        expanded.append(node)
+        n_explored += 1
+
+        if(node == goal):
+            chemin = reconstruct_path(came_from, start, goal)
+            cout = path_cost(adj, chemin)
+            return SearchResult(chemin, cout, expanded, n_explored)
+
+        for v, dist in adj[node]:
+            if(v not in visited):
+                queue.append(v)
+                came_from[v] = node
 
     return SearchResult(None, math.inf, expanded, n_explored) # N'effacez pas cette ligne
 
@@ -99,6 +116,27 @@ def dfs(adj: Adjacency, start: int, goal: int) -> SearchResult:
     n_explored = 0
 
     # TODO : Compléter le code ici
+
+    visited = set()
+    stack = deque([start])
+
+    while(stack):
+        node = stack.pop()
+        visited.add(node)
+        expanded.append(node)
+        n_explored += 1
+
+        # print(node)
+
+        if(node == goal):
+            chemin = reconstruct_path(came_from, start, goal)
+            cout = path_cost(adj, chemin)
+            return SearchResult(chemin, cout, expanded, n_explored)
+
+        for v, dist in (adj[node]):
+            if(v not in visited):
+                stack.append(v)
+                came_from[v] = node
 
     return SearchResult(None, math.inf, expanded, n_explored) # N'effacez pas cette ligne
 
@@ -119,6 +157,34 @@ def ucs(adj: Adjacency, start: int, goal: int) -> SearchResult:
     n_explored = 0
 
     # TODO : Compléter le code ici
+
+    dist : dict[int, float] = {}
+
+    for v in adj:
+        dist[v] = float(inf)
+
+    pq = [(0, start)]
+    heapq.heapify(pq)
+
+    while(pq):
+        current_dist, node = heapq.heappop(pq)
+        expanded.append(node)
+        n_explored += 1
+
+        if(node == goal):
+            chemin = reconstruct_path(came_from, start, goal)
+            cout = path_cost(adj, chemin)
+            return SearchResult(chemin, cout, expanded, n_explored)
+
+        if(current_dist > dist[node]):
+            continue
+
+        for v, next_dist in adj[node]:
+            new_dist = current_dist + next_dist
+            if (new_dist < dist[v]):
+                dist[v] = new_dist
+                came_from[v] = node
+                heapq.heappush(pq, (new_dist, v))
 
     return SearchResult(None, math.inf, expanded, n_explored) # N'effacez pas cette ligne
 
@@ -141,7 +207,12 @@ def heuristic_euclidean(node: int, goal: int, coords_m: CoordsM) -> float:
     Pour caluler la distance euclidienne entre deux points (x1, y1) et (x2, y2), vous pouvez utiliser la fonction math.hypoth
     """
     # TODO : remplacez le return par votre implémetation.
-    return 0.0
+    x1, y1 = coords_m[node]
+    x2, y2 = coords_m[goal]
+    dx = x2 - x1
+    dy = y2 - y1
+    d = math.hypot(dx, dy)
+    return d
 
 # ============================================================================
 # TODO 5/6 : Heuristique manhattan
@@ -155,7 +226,10 @@ def heuristic_manhattan(node: int, goal: int, coords_m: CoordsM) -> float:
     Consigne à respecter: Utiliser la fonction abs() 
     """
     # TODO : remplacez le return par votre implémetation.
-    return 0.0
+    x1, y1 = coords_m[node]
+    x2, y2 = coords_m[goal]
+    d = abs(x1 - x2) + (y1 - y2)
+    return d
 
 
 # ============================================================================
@@ -184,5 +258,35 @@ def a_star(adj: Adjacency, start: int, goal: int, heuristic) -> SearchResult:
     n_explored = 0
 
     # TODO : Compléter le code ici
+
+    open = [(0, start)]
+    heapq.heapify(open)
+    closed = set()
+    g: dict[int, float] = {} # actual cost to get to a node
+
+    for u in adj:
+        g[u] = float(inf)
+    
+    g[start] = 0
+
+    while(open):
+        _, node = heapq.heappop(open)
+        closed.add(node)
+        expanded.append(node)
+        n_explored += 1
+        if (node == goal):
+            chemin = reconstruct_path(came_from, start, goal)
+            cout = path_cost(adj, chemin)
+            return SearchResult(chemin, cout, expanded, n_explored)
+        
+        for v, next_dist in adj[node]:
+            if (v in closed):
+                continue
+            new_dist = g[node] + next_dist
+            if (new_dist < g[v]):
+                g[v] = new_dist
+                came_from[v] = node
+                f = g[v] + heuristic(v)  # estimated cost
+                heapq.heappush(open, (f, v))
 
     return SearchResult(None, math.inf, expanded, n_explored) # N'effacez pas cette ligne
