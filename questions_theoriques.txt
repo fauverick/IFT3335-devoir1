@@ -5,8 +5,8 @@
 ============================================================================
 
 Prénom, Nom et Matricule:
-
-
+Olivier, Larue 20269986
+Hung, Nguyen, TODO
 
 
 ----------------------------------------------------------------------------
@@ -16,9 +16,35 @@ obtenu ainsi que la valeur de ce dernier pour l'algorithme A* avec les
 heuristiques de Manhattan et Euclidienne. Est-ce que les deux sont identiques
 ou il y en a une meilleure que l'autre ?
 
-Réponse :
+Réponse : 
+Non, elles ne sont pas identiques
+- A* Heuristique Manhattan: Solution 55 nodes, 4.99km, 332 nodes explorés
+- A* Heuristiaue Euclidienne: Solution 49 nodes, 4.87km, 393 noeuds explorés
 
+On peut alors voir que la solution trouvé avec l'heuristique Manhattan n'est pas la meilleure des 
+deux en termes de distance la plus courte (4.99 > 4.87). Par contre, on peut 
+observer que la solution mahattan a explorés moins de nodes que la solution Euclidienne.
+En terme de plus courte distance, A* avec heuristique Euclidienne est meilleure et
+obtien la même solution (optimale) que UCS / Dijkstra, soit: 
+itinéraire :
+    Rue Rachel Est — 275 m
+    Rue Frontenac — 622 m
+    Rue D'Iberville — 323 m
+    Boulevard Saint-Joseph Est — 2140 m
+    Avenue Henri-Julien — 411 m
+    Rue Maguire — 360 m
+    Boulevard Saint-Laurent — 739 m
 
+Toutefois, Manhattan explore moins de nodes, donc termine plus rapidement. 
+Elle est donc plus "rapide" que Euclidienne.
+
+Ceci s'explique par la définition des heuristique: 
+- Par propriété, la distance euclidienne entre deux points est toujours le chemin le plus court.
+Elle est donc admissible et cohérente, ce qui garatie alors à A* de trouver le chemin optimal.
+- Manhattan est toujours plus grand que la distance Euclidienne (puisqu'elle est la plus courte).
+Alors, l'heuristique manhattan surestime toujours le coût, ce qui cause A* a ne pas
+être assurer d'être optimal. Par contre, puisque l'heuristique est plus grand, 
+il est plus gourmand et explore donc moins de nodes, permettant un solution plus rapide.
 
 
 ----------------------------------------------------------------------------
@@ -28,9 +54,18 @@ entre le point de départ et le point d'arrivée, c'est-à-dire, qui trouvent le
 chemin de distance minimum entre le point de départ et d'arrivée ?
 
 Réponse :
+Les algorithmes qui assurent le chemin le plus court sont: 
+- UCS (Dijkstra)
+- A* avec l'heuristique euclidienne.
 
+On sait que UCS/Dijkstra développe toujours une solution optimal lorsque les coût sont positifs.
+Comme mentionné dans la question 1, l'heuristique euclidienne est admissible et 
+cohérente ce qui garatie à A* d'être optimale.
 
-
+Les autres ne garantissent pas l'optimalité :
+- BFS: 5407 m, 558 nodes explorés.
+- DFS suit une branche jusqu'au bout sans tenir compte des coûts: 18 121 m, 153 arêtes, 317 nodes explorés.
+- A* + Manhattan n'est pas admissible (il surestime), donc il n'est pas toujours optimal.
 
 ----------------------------------------------------------------------------
 Question 3 (4 points)
@@ -39,8 +74,15 @@ application d'aide à la navigation ? Basez votre choix sur la fiabilité ainsi
 que la rapidité de la réponse trouvée.
 
 Réponse :
-
-
+Je choisierais A* avec heuristique euclidienne, puisqu'il assure l'optimalité comme UCS/Dijkstra
+et donc fiable, mais cette il est aussi plus rapide qu'UCS: 
+393 nodes explorés pour A* vs 627 nodes explorés pour UCS.
+On assure alors la solution la plus rapide amenant à la solution optimale. 
+BFS et DFS sont pas assez fiable pour la distance. Pour A* avec Manhattan, il est interessant
+puisque c'est le plus rapide de tout les algorithmes utilisé dans ce TP. Toutefois,
+l'heuristique fait en sorte que le chemin est parfois vraiment plus long. À mon avis,
+la vitesse ne vaut pas le manque d'optimalité. D'où pourquoi A* avec heuristique
+euclidienne est le meilleure choix.
 
 
 ----------------------------------------------------------------------------
@@ -53,7 +95,28 @@ implémentés dans ce devoir ? Proposez un autre algorithme ou une variante pour
 régler ce problème.
 
 Réponse :
+Problème : le réseau routier de Montréal à Vancouver compte des dizaines de millions de nœuds.
+Le temps de calcul et la mémoire explosent:
+Les algorithmes proposer devient trop lent pour avoir une réponse en temps réel, 
+voire même impossible en mémoire
 
+Solutions: 
 
+Deux variantes à A* pourrait être utilisé dans cette situation, nous permettant 
+de résoudre le problème de la mémoire:
+- SMA*: A* avec mémoire maximale fixée. Quand la mémoire est pleine, on retire le
+node avec valeur la plus élevé (moins prometteur) et report sa valeur dans son parent
+pour le recalculer au besoin. Cette variante reste optimal.
+Cela nous permet de trouver l'optimal même si notre mémoire est limitée.
 
+- IDA*: On recherche avec A* mais avec une profondeur limitée du cout de f.
+On augment graduellement le cout de f et on recommence du début.
+Cette solution nous permet de trouver l'optimum et rend la complexité de 
+l'espace exponentielle à une complexité linéaire.
+
+On pourrait également se contenter d'une solution qui n'offre pas nécessairement
+l'optimalité, mais qui nous offre un meilleur temps de calcul et moins de mémoire.
+On utiliserait un heuristique qui surestime légèrement, nous donnant potentiellement 
+une solution qui s'écarte de la solution de quelques mètre voir kilomètre, mais sur 
+un chemin de plusieurs milliers de kilomètre, c'est négligeable.
 

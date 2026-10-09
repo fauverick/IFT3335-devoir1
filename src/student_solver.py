@@ -96,6 +96,7 @@ def bfs(adj: Adjacency, start: int, goal: int) -> SearchResult:
 
         for v, dist in adj[node]:
             if(v not in visited):
+                visited.add(v) # to prevent revisiting and re-add the same node
                 queue.append(v)
                 came_from[v] = node
 
@@ -115,8 +116,6 @@ def dfs(adj: Adjacency, start: int, goal: int) -> SearchResult:
     expanded: list[int] = []
     n_explored = 0
 
-    # TODO : Compléter le code ici
-
     visited = set()
     stack = deque([start])
 
@@ -135,6 +134,7 @@ def dfs(adj: Adjacency, start: int, goal: int) -> SearchResult:
 
         for v, dist in (adj[node]):
             if(v not in visited):
+                visited.add(v)
                 stack.append(v)
                 came_from[v] = node
 
@@ -156,18 +156,22 @@ def ucs(adj: Adjacency, start: int, goal: int) -> SearchResult:
     expanded: list[int] = []
     n_explored = 0
 
-    # TODO : Compléter le code ici
 
     dist : dict[int, float] = {}
 
     for v in adj:
         dist[v] = float(inf)
 
+    dist[start] # set start to 0
+
     pq = [(0, start)]
     heapq.heapify(pq)
 
     while(pq):
         current_dist, node = heapq.heappop(pq)
+        if(current_dist > dist[node]):
+            continue
+
         expanded.append(node)
         n_explored += 1
 
@@ -175,9 +179,6 @@ def ucs(adj: Adjacency, start: int, goal: int) -> SearchResult:
             chemin = reconstruct_path(came_from, start, goal)
             cout = path_cost(adj, chemin)
             return SearchResult(chemin, cout, expanded, n_explored)
-
-        if(current_dist > dist[node]):
-            continue
 
         for v, next_dist in adj[node]:
             new_dist = current_dist + next_dist
@@ -206,7 +207,7 @@ def heuristic_euclidean(node: int, goal: int, coords_m: CoordsM) -> float:
 
     Pour caluler la distance euclidienne entre deux points (x1, y1) et (x2, y2), vous pouvez utiliser la fonction math.hypoth
     """
-    # TODO : remplacez le return par votre implémetation.
+
     x1, y1 = coords_m[node]
     x2, y2 = coords_m[goal]
     dx = x2 - x1
@@ -225,10 +226,10 @@ def heuristic_manhattan(node: int, goal: int, coords_m: CoordsM) -> float:
 
     Consigne à respecter: Utiliser la fonction abs() 
     """
-    # TODO : remplacez le return par votre implémetation.
+
     x1, y1 = coords_m[node]
     x2, y2 = coords_m[goal]
-    d = abs(x1 - x2) + (y1 - y2)
+    d = abs(x1 - x2) + abs(y1 - y2)
     return d
 
 
@@ -257,10 +258,8 @@ def a_star(adj: Adjacency, start: int, goal: int, heuristic) -> SearchResult:
     expanded: list[int] = []
     n_explored = 0
 
-    # TODO : Compléter le code ici
-
-    open = [(0, start)]
-    heapq.heapify(open)
+    heap_start = [(0, start)]
+    heapq.heapify(heap_start)
     closed = set()
     g: dict[int, float] = {} # actual cost to get to a node
 
@@ -269,8 +268,11 @@ def a_star(adj: Adjacency, start: int, goal: int, heuristic) -> SearchResult:
     
     g[start] = 0
 
-    while(open):
-        _, node = heapq.heappop(open)
+    while heap_start:
+        _, node = heapq.heappop(heap_start)
+        if node in closed: 
+            continue
+        
         closed.add(node)
         expanded.append(node)
         n_explored += 1
@@ -282,11 +284,12 @@ def a_star(adj: Adjacency, start: int, goal: int, heuristic) -> SearchResult:
         for v, next_dist in adj[node]:
             if (v in closed):
                 continue
+
             new_dist = g[node] + next_dist
             if (new_dist < g[v]):
                 g[v] = new_dist
                 came_from[v] = node
                 f = g[v] + heuristic(v)  # estimated cost
-                heapq.heappush(open, (f, v))
+                heapq.heappush(heap_start, (f, v))
 
     return SearchResult(None, math.inf, expanded, n_explored) # N'effacez pas cette ligne
